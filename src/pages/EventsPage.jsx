@@ -1,21 +1,66 @@
-import React from "react";
-import { Heading } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Card } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import {
+  Heading,
+  Card,
+  Box,
+  Center,
+  Input,
+  Text,
+  Select,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { Box, Center, Input, Text } from "@chakra-ui/react";
 
 export const EventsPage = () => {
   const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [searchField, setSearchField] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  // Ophalen van evenementen
   useEffect(() => {
     const fetchEvents = async () => {
       const response = await fetch("http://localhost:3000/events");
-      const events = await response.json();
-      setEvents(events);
+      const eventsData = await response.json();
+      setEvents(eventsData);
     };
     fetchEvents();
   }, []);
+
+  // Ophalen van categorieën
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch("http://localhost:3000/categories");
+      const categoriesData = await response.json();
+      setCategories(categoriesData);
+    };
+    fetchCategories();
+  }, []);
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : "Unknown Category";
+  };
+
+  // Filteren van evenementen op basis van de zoekterm en de geselecteerde categorie
+  const matchedEvents = events.filter((event) => {
+    const matchesSearch = event.title
+      .toLowerCase()
+      .includes(searchField.toLowerCase());
+    const matchesCategory = selectedCategory
+      ? event.categoryId === Number(selectedCategory)
+      : true; // Als geen categorie is geselecteerd, laat dan alle events zien
+    return matchesSearch && matchesCategory;
+  });
+
+  // Functie voor zoekveld
+  const handleSearchChange = (event) => {
+    setSearchField(event.target.value);
+  };
+
+  // Functie voor het selecteren van een categorie
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
 
   return (
     <Box
@@ -36,44 +81,66 @@ export const EventsPage = () => {
         Welcome to our eventspage
       </Heading>
 
+      {/* Zoekveld */}
       <Center>
         <Input
           type="text"
           w={["90vw", "60vw", "60vw", "30vw"]}
-          //onChange={handleChange}
+          onChange={handleSearchChange}
           placeholder="Search events..."
           bg="gray.200"
           margin="20px"
         />
       </Center>
 
-      <Box>
-        {events.map((event) => (
-          <Link to={`/event/${event.id}`} key={event.id}>
-            <Card
-              key={event.id}
-              border="solid"
-              borderColor="blackAlpha.900"
-              p={4}
-              m={4}
-              width="50%"
-              alignItems="center"
-            >
-              <Text>Event: {event.title}</Text>
-              <Text>Description: {event.description}</Text>
-              <Text>
+      <Center>
+        <Select
+          placeholder="Filter by category"
+          w={["90vw", "60vw", "60vw", "30vw"]}
+          bg="gray.200"
+          margin="20px"
+          onChange={handleCategoryChange}
+        >
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+      </Center>
+
+      {matchedEvents.length === 0 ? (
+        <Text fontSize="xl" color="black" mt={10}>
+          Event not found, please change searchinput
+        </Text>
+      ) : (
+        <Box>
+          {matchedEvents.map((event) => (
+            <Link to={`/event/${event.id}`} key={event.id}>
+              <Card
+                key={event.id}
+                border="solid"
+                borderColor="blackAlpha.900"
+                p={4}
+                m={4}
+                width="50%"
+                alignItems="center"
+              >
+                <Text>Event: {event.title}</Text>
+                <Text>Description: {event.description}</Text>
                 <img
                   src={event.image}
                   alt={event.title}
                   style={{ maxWidth: "100%", height: "auto" }}
                 />
-              </Text>
-              <Text>Starting time: {event.startTime}</Text>
-              <Text>End time: {event.endTime}</Text>
-            </Card>
-          </Link>
-        ))}
-      </Box>
+                <Text>Starting time: {event.startTime}</Text>
+                <Text>End time: {event.endTime}</Text>
+                <Text>Category: {getCategoryName(event.categoryId)}</Text>
+              </Card>
+            </Link>
+          ))}
+        </Box>
+      )}
       <Box border="solid" borderRadius="10px" padding="10px" margin="5px">
         <Link to={`/add-event`}>Add Event</Link>
       </Box>

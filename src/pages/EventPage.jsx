@@ -4,13 +4,13 @@ import { Box, Text } from "@chakra-ui/react";
 
 export const EventPage = () => {
   const { id } = useParams();
-  const [eventDetails, setEventDetails] = useState([null]);
+  const [eventDetails, setEventDetails] = useState({});
 
   useEffect(() => {
     const fetchEventDetails = async () => {
-      const response = await fetch(`http://localhost:3000/events/${eventId}`);
+      const response = await fetch(`http://localhost:3000/events/${id}`);
       const eventDetails = await response.json();
-      setEventDetails(events);
+      setEventDetails(eventDetails);
     };
     fetchEventDetails();
   }, [id]);
@@ -27,8 +27,8 @@ export const EventPage = () => {
       backgroundColor="blue.100"
     >
       <Text>Event Detail Page</Text>
-      <Text>{event.title}</Text>
-      <Text>Description: {event.description}</Text>
+      <Text>{eventDetails.title}</Text>
+      <Text>Description: {eventDetails.description}</Text>
       <img
         src={event.image}
         alt={event.title}
