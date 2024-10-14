@@ -7,6 +7,7 @@ import {
   Input,
   Text,
   Select,
+  Image,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
@@ -128,10 +129,11 @@ export const EventsPage = () => {
               >
                 <Text>Event: {event.title}</Text>
                 <Text>Description: {event.description}</Text>
-                <img
+                <Image
                   src={event.image}
                   alt={event.title}
                   style={{ maxWidth: "100%", height: "auto" }}
+                  borderRadius="10px"
                 />
                 <Text>Starting time: {event.startTime}</Text>
                 <Text>End time: {event.endTime}</Text>

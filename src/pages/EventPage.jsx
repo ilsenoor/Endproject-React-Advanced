@@ -3,17 +3,17 @@ import { useParams } from "react-router-dom";
 import { Box, Text } from "@chakra-ui/react";
 
 export const EventPage = () => {
-  const { id } = useParams();
-  const [eventDetails, setEventDetails] = useState({});
+  const { eventId } = useParams();
+  const [event, setEvent] = useState({});
 
   useEffect(() => {
     const fetchEventDetails = async () => {
-      const response = await fetch(`http://localhost:3000/events/${id}`);
-      const eventDetails = await response.json();
-      setEventDetails(eventDetails);
+      const response = await fetch(`http://localhost:3000/events/${eventId}`);
+      const event = await response.json();
+      setEvent(event);
     };
     fetchEventDetails();
-  }, [id]);
+  }, [eventId]);
 
   return (
     <Box
@@ -26,17 +26,17 @@ export const EventPage = () => {
       padding="20px"
       backgroundColor="blue.100"
     >
-      <Text>Event Detail Page</Text>
-      <Text>{eventDetails.title}</Text>
-      <Text>Description: {eventDetails.description}</Text>
+      <Text fontSize="3xl">Event Detail Page</Text>
+      <Text fontSize="2xl">{event.title}</Text>
+      <Text fontSize="2xl">Description: {event.description}</Text>
       <img
         src={event.image}
         alt={event.title}
         style={{ maxWidth: "50%", height: "50%" }}
       />
-      <Text>Starting time: {event.startTime}</Text>
-      <Text>End time: {event.endTime}</Text>
-      <Text>Created by: {event.createdBy}</Text>
+      <Text fontSize="2xl">Starting time: {event.startTime}</Text>
+      <Text fontSize="2xl">End time: {event.endTime}</Text>
+      <Text fontSize="2xl">Created by: {event.createdBy}</Text>
     </Box>
   );
 };
