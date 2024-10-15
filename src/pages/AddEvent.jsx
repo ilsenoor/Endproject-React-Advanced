@@ -110,7 +110,7 @@ export const AddEvent = () => {
           </Select>
         </FormControl>
         <FormControl>
-          <FormLabel>Title</FormLabel>
+          <FormLabel>Title of event</FormLabel>
           <Input
             type="text"
             name="title"
@@ -122,7 +122,7 @@ export const AddEvent = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>Description</FormLabel>
+          <FormLabel>Description of event</FormLabel>
           <Input
             type="text"
             name="description"
@@ -177,7 +177,8 @@ export const AddEvent = () => {
               value={cat.id}
               isChecked={selectedCategories.includes(cat.id)}
               onChange={() => handleCheckboxChange(cat.id)}
-              mb={2}
+              borderColor="blackAlpha.900"
+              margin="10px"
             >
               {cat.name}
             </Checkbox>

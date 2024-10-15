@@ -14,30 +14,24 @@ import {
   useToast,
   Select,
 } from "@chakra-ui/react";
-import { Form, useNavigate } from "react-router-dom";
+import { Form } from "react-router-dom";
 
-// Form om event te editten
-export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
-  // State voor alle eventvelden
+export const EditEvent = ({ isOpen, onClose, event, eventId }) => {
   const [title, setTitle] = useState(event.title || "");
   const [description, setDescription] = useState(event.description || "");
   const [image, setImage] = useState(event.image || "");
   const [startTime, setStartTime] = useState(event.startTime || "");
   const [endTime, setEndTime] = useState(event.endTime || "");
   const [selectedCategories, setSelectedCategories] = useState(
-    event.categoryIds || [] // Aangenomen dat categoryIds een array is
+    event.categoryIds || []
   );
   const [createdBy, setCreatedBy] = useState(event.createdBy || "");
 
-  // State voor de lijst van gebruikers en categorieën
   const [users, setUsers] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // Initialiseer de toast
   const toast = useToast();
-  const navigate = useNavigate(); // Gebruik de useNavigate hook
 
-  // Bij het openen van de modal, zorg ervoor dat de velden worden gevuld met de bestaande data
   useEffect(() => {
     if (event) {
       setTitle(event.title);
@@ -49,7 +43,6 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
     }
   }, [event]);
 
-  // Haal de lijst van gebruikers op
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await fetch("http://localhost:3000/users");
@@ -59,7 +52,6 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
     fetchUsers();
   }, []);
 
-  // Haal de lijst van categorieën op
   useEffect(() => {
     const fetchCategories = async () => {
       const response = await fetch("http://localhost:3000/categories");
@@ -69,7 +61,6 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
     fetchCategories();
   }, []);
 
-  // Update event handler
   const handleUpdateEvent = async () => {
     const updatedEvent = {
       ...event,
@@ -78,13 +69,12 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
       image,
       startTime,
       endTime,
-      categoryIds: selectedCategories, // Aangepaste categoryIds
+      categoryIds: selectedCategories,
       createdBy,
     };
 
-    // API-aanroep om het evenement bij te werken
     try {
-      await fetch(`http://localhost:3000/events/${eventId}`, {
+      const response = await fetch(`http://localhost:3000/events/${eventId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +82,10 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
         body: JSON.stringify(updatedEvent),
       });
 
-      // Toon toast melding bij succesvol updaten
+      if (!response.ok) {
+        throw new Error("Failed to update event");
+      }
+
       toast({
         title: "Event updated.",
         description: "The event was successfully updated.",
@@ -101,9 +94,10 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
         isClosable: true,
       });
 
-      onClose(); // Sluit de modal na het opslaan
+      onClose();
+
+      window.location.reload();
     } catch (error) {
-      // Toon een foutmelding bij een probleem
       toast({
         title: "Error.",
         description: "An error occurred while updating the event.",
@@ -114,49 +108,11 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
     }
   };
 
-  // Functie om het evenement te verwijderen
-  const handleDeleteEvent = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
-    if (confirmDelete) {
-      try {
-        await fetch(`http://localhost:3000/events/${eventId}`, {
-          method: "DELETE",
-        });
-
-        // Toon toast melding bij succesvol verwijderen
-        toast({
-          title: "Event deleted.",
-          description: "The event was successfully deleted.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-
-        onDelete(eventId); // Verwijder het evenement uit de weergave
-        navigate("/"); // Navigeer terug naar de homepage
-        onClose(); // Sluit de modal
-      } catch (error) {
-        // Toon een foutmelding bij een probleem
-        toast({
-          title: "Error.",
-          description: "An error occurred while deleting the event.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  };
-
-  // Functie om de checkboxstatus bij te werken
   const handleCheckboxChange = (categoryId) => {
-    setSelectedCategories(
-      (prev) =>
-        prev.includes(categoryId)
-          ? prev.filter((id) => id !== categoryId) // Verwijder als al geselecteerd
-          : [...prev, categoryId] // Voeg toe als niet geselecteerd
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
     );
   };
 
@@ -239,9 +195,6 @@ export const EditEvent = ({ isOpen, onClose, event, eventId, onDelete }) => {
           </Button>
           <Button variant="ghost" onClick={onClose}>
             Cancel
-          </Button>
-          <Button colorScheme="red" onClick={handleDeleteEvent}>
-            Delete Event
           </Button>
         </ModalFooter>
       </ModalContent>

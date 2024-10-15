@@ -119,7 +119,7 @@ export const EventsPage = () => {
       ) : (
         <Box>
           {matchedEvents.map((event) => (
-            <Link to={`/event/${event.id}`} key={event.id}>
+            <Link to={`/event/${event.id}`} key={event.id} margin="50px">
               <Card
                 key={event.id}
                 border="solid"
@@ -130,7 +130,7 @@ export const EventsPage = () => {
                 alignItems="center"
               >
                 <Text>Event: {event.title}</Text>
-                <Text>Description: {event.description}</Text>
+                <Text>{event.description}</Text>
                 <Image
                   src={event.image}
                   alt={event.title}
