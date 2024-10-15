@@ -37,9 +37,12 @@ export const EventsPage = () => {
     fetchCategories();
   }, []);
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : "Unknown Category";
+  // Functie om de categorieën te krijgen bij een event
+  const getCategoryNames = (categoryIds) => {
+    const eventCategories = categories.filter((category) =>
+      categoryIds.includes(category.id)
+    );
+    return eventCategories.map((cat) => cat.name).join(", ");
   };
 
   // Filteren van evenementen op basis van de zoekterm en de geselecteerde categorie
@@ -48,8 +51,8 @@ export const EventsPage = () => {
       .toLowerCase()
       .includes(searchField.toLowerCase());
     const matchesCategory = selectedCategory
-      ? event.categoryId === Number(selectedCategory)
-      : true; // Als geen categorie is geselecteerd, laat dan alle events zien
+      ? event.categoryIds.includes(Number(selectedCategory))
+      : true;
     return matchesSearch && matchesCategory;
   });
 
@@ -82,13 +85,12 @@ export const EventsPage = () => {
         Welcome to our eventspage
       </Heading>
 
-      {/* Zoekveld */}
       <Center>
         <Input
           type="text"
           w={["90vw", "60vw", "60vw", "30vw"]}
           onChange={handleSearchChange}
-          placeholder="Search events..."
+          placeholder="Search for events"
           bg="gray.200"
           margin="20px"
         />
@@ -112,7 +114,7 @@ export const EventsPage = () => {
 
       {matchedEvents.length === 0 ? (
         <Text fontSize="xl" color="black" mt={10}>
-          Event not found, please change searchinput
+          Event not found, please change search input
         </Text>
       ) : (
         <Box>
@@ -137,7 +139,7 @@ export const EventsPage = () => {
                 />
                 <Text>Starting time: {event.startTime}</Text>
                 <Text>End time: {event.endTime}</Text>
-                <Text>Category: {getCategoryName(event.categoryId)}</Text>
+                <Text>Category: {getCategoryNames(event.categoryIds)}</Text>
               </Card>
             </Link>
           ))}

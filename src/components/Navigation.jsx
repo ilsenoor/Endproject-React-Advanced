@@ -8,7 +8,7 @@ export const Navigation = () => {
     <Box
       width="100vw"
       display="flex"
-      flexDirection="column"
+      flexDirection="row"
       justifyContent="flex-start"
       alignItems="center"
       padding="20px"

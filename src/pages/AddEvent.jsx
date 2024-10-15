@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -6,18 +6,49 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Checkbox,
+  Select,
 } from "@chakra-ui/react";
-import { Form } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 export const AddEvent = () => {
+  const navigate = useNavigate(); // Gebruik de useNavigate hook
   const [createdBy, setCreatedBy] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [categoryIds, setCategoryIds] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [location, setLocation] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch("http://localhost:3000/categories");
+      const categoriesData = await response.json();
+      setCategories(categoriesData);
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch("http://localhost:3000/users");
+      const usersData = await response.json();
+      setUsers(usersData);
+    };
+    fetchUsers();
+  }, []);
+
+  const handleCheckboxChange = (categoryId) => {
+    setSelectedCategories((prevSelected) =>
+      prevSelected.includes(categoryId)
+        ? prevSelected.filter((id) => id !== categoryId)
+        : [...prevSelected, categoryId]
+    );
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,12 +59,10 @@ export const AddEvent = () => {
       image,
       startTime,
       endTime,
-      categoryIds,
+      categoryIds: selectedCategories,
       location,
     };
-    console.log(eventData);
 
-    // Asynchrone fetch-aanroep om data naar je server te sturen
     const response = await fetch("http://localhost:3000/events", {
       method: "POST",
       body: JSON.stringify(eventData),
@@ -42,6 +71,7 @@ export const AddEvent = () => {
 
     if (response.ok) {
       console.log("Event successfully submitted");
+      navigate("/"); // Navigeer terug naar de EventsPage
     } else {
       console.error("Failed to submit event");
     }
@@ -64,16 +94,20 @@ export const AddEvent = () => {
       <Form onSubmit={handleSubmit}>
         <FormControl>
           <FormLabel>Created by</FormLabel>
-
-          <Input
-            type="text"
-            name="created-by"
+          <Select
+            placeholder="Select Creator"
             value={createdBy}
             onChange={(e) => setCreatedBy(e.target.value)}
             border="solid"
             borderColor="gray.600"
             required
-          />
+          >
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </Select>
         </FormControl>
         <FormControl>
           <FormLabel>Title</FormLabel>
@@ -136,16 +170,18 @@ export const AddEvent = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>Category</FormLabel>
-          <Input
-            type="text"
-            name="categoryIds"
-            value={categoryIds}
-            onChange={(e) => setCategoryIds(e.target.value)}
-            border="solid"
-            borderColor="gray.600"
-            required
-          />
+          <FormLabel>Categories:</FormLabel>
+          {categories.map((cat) => (
+            <Checkbox
+              key={cat.id}
+              value={cat.id}
+              isChecked={selectedCategories.includes(cat.id)}
+              onChange={() => handleCheckboxChange(cat.id)}
+              mb={2}
+            >
+              {cat.name}
+            </Checkbox>
+          ))}
         </FormControl>
         <FormControl>
           <FormLabel>Location</FormLabel>
