@@ -17,7 +17,6 @@ export const EventsPage = () => {
   const [searchField, setSearchField] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Ophalen van evenementen
   useEffect(() => {
     const fetchEvents = async () => {
       const response = await fetch("http://localhost:3000/events");
@@ -27,7 +26,6 @@ export const EventsPage = () => {
     fetchEvents();
   }, []);
 
-  // Ophalen van categorieën
   useEffect(() => {
     const fetchCategories = async () => {
       const response = await fetch("http://localhost:3000/categories");
@@ -37,7 +35,6 @@ export const EventsPage = () => {
     fetchCategories();
   }, []);
 
-  // Functie om de categorieën te krijgen bij een event
   const getCategoryNames = (categoryIds) => {
     const eventCategories = categories.filter((category) =>
       categoryIds.includes(category.id)
@@ -45,7 +42,6 @@ export const EventsPage = () => {
     return eventCategories.map((cat) => cat.name).join(", ");
   };
 
-  // Filteren van evenementen op basis van de zoekterm en de geselecteerde categorie
   const matchedEvents = events.filter((event) => {
     const matchesSearch = event.title
       .toLowerCase()
@@ -56,12 +52,10 @@ export const EventsPage = () => {
     return matchesSearch && matchesCategory;
   });
 
-  // Functie voor zoekveld
   const handleSearchChange = (event) => {
     setSearchField(event.target.value);
   };
 
-  // Functie voor het selecteren van een categorie
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
@@ -117,31 +111,42 @@ export const EventsPage = () => {
           Event not found, please change search input
         </Text>
       ) : (
-        <Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="center"
+        >
           {matchedEvents.map((event) => (
-            <Link to={`/event/${event.id}`} key={event.id} margin="50px">
-              <Card
-                key={event.id}
-                border="solid"
-                borderColor="blackAlpha.900"
-                p={4}
-                m={4}
-                width="50%"
-                alignItems="center"
-              >
-                <Text>Event: {event.title}</Text>
-                <Text>{event.description}</Text>
-                <Image
-                  src={event.image}
-                  alt={event.title}
-                  style={{ maxWidth: "100%", height: "auto" }}
-                  borderRadius="10px"
-                />
-                <Text>Starting time: {event.startTime}</Text>
-                <Text>End time: {event.endTime}</Text>
-                <Text>Category: {getCategoryNames(event.categoryIds)}</Text>
-              </Card>
-            </Link>
+            <Box key={event.id} margin="20px">
+              <Link to={`/event/${event.id}`}>
+                <Card
+                  border="solid"
+                  borderColor="blackAlpha.900"
+                  p={4}
+                  m={4}
+                  width="300px" // Consistente breedte
+                  height="450px" // Vaste hoogte voor gelijke grootte
+                  display="flex" // Zorgt ervoor dat de inhoud zich gelijkmatig vult
+                  flexDirection="column"
+                  justifyContent="space-between" // Zorgt dat de items evenredig worden verdeeld
+                  alignItems="center"
+                  textAlign="center"
+                >
+                  <Text fontSize="2xl"> {event.title}</Text>
+                  <Text>{event.description}</Text>
+                  <Image
+                    src={event.image}
+                    alt={event.title}
+                    style={{ maxWidth: "100%", height: "auto" }}
+                    borderRadius="10px"
+                  />
+                  <Text> Start: {event.startTime}</Text>
+                  <Text> End: {event.endTime}</Text>
+                  <Text>Category: {getCategoryNames(event.categoryIds)}</Text>
+                </Card>
+              </Link>
+            </Box>
           ))}
         </Box>
       )}

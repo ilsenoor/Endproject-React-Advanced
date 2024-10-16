@@ -4,7 +4,7 @@ import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@chakra-ui/react";
 
-const DeleteEvent = ({ eventId, onDelete, onClose }) => {
+export const DeleteEvent = ({ eventId, onDelete, onClose }) => {
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -54,5 +54,3 @@ const DeleteEvent = ({ eventId, onDelete, onClose }) => {
     </Button>
   );
 };
-
-export default DeleteEvent;

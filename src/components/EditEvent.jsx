@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { Form } from "react-router-dom";
 
-export const EditEvent = ({ isOpen, onClose, event, eventId }) => {
+export const EditEvent = ({ isOpen, onClose, event, eventId, onUpdate }) => {
   const [title, setTitle] = useState(event.title || "");
   const [description, setDescription] = useState(event.description || "");
   const [image, setImage] = useState(event.image || "");
@@ -62,6 +62,7 @@ export const EditEvent = ({ isOpen, onClose, event, eventId }) => {
   }, []);
 
   const handleUpdateEvent = async () => {
+    console.log("handleUpdateEvent called");
     const updatedEvent = {
       ...event,
       title,
@@ -94,9 +95,8 @@ export const EditEvent = ({ isOpen, onClose, event, eventId }) => {
         isClosable: true,
       });
 
+      onUpdate(updatedEvent);
       onClose();
-
-      window.location.reload();
     } catch (error) {
       toast({
         title: "Error.",

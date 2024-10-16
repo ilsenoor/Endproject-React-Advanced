@@ -9,7 +9,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { EditEvent } from "../components/EditEvent";
-import DeleteEvent from "../components/DeleteEvent";
+import { DeleteEvent } from "../components/DeleteEvent";
 
 export const EventPage = () => {
   const { eventId } = useParams();
@@ -65,6 +65,10 @@ export const EventPage = () => {
     navigate("/");
   };
 
+  const handleUpdateEvent = (updatedEvent) => {
+    setEvent(updatedEvent);
+  };
+
   return (
     <Box
       width="100vw"
@@ -76,36 +80,74 @@ export const EventPage = () => {
       padding="20px"
       backgroundColor="blue.100"
     >
-      <Text fontSize="3xl" textDecoration="underline">
-        Event Detail Page
-      </Text>
-      <Text fontSize="2xl">{event.title}</Text>
-      <Text fontSize="2xl">Description: {event.description}</Text>
-      <Image
-        src={event.image}
-        alt={event.title}
-        style={{ maxWidth: "50%", height: "50%" }}
-        margin="20px"
-        borderRadius="10px"
-      />
-      <Text fontSize="2xl">Starting time: {event.startTime}</Text>
-      <Text fontSize="2xl">End time: {event.endTime}</Text>
-      <Text fontSize="2xl">
-        Category: {getCategoryNames(event.categoryIds)}
-      </Text>
-      {createdByUser && (
-        <Box textAlign="center">
-          <Text fontSize="2xl">Created by: {createdByUser.name}</Text>
+      <Box textAlign="center">
+        <Text fontSize="4xl" textDecoration="underline">
+          {event.title}
+        </Text>
+        <Text fontSize="2xl"> {event.description}</Text>
+      </Box>
+
+      <Flex
+        width="100%"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        flexDirection={{ base: "column", md: "row" }}
+      >
+        <Box
+          flex="1"
+          display="flex"
+          justifyContent="flex-end"
+          marginRight="20px"
+        >
           <Image
-            src={createdByUser.image}
-            alt={createdByUser.name}
-            boxSize="150px"
-            borderRadius="full"
-            margin="15px"
+            src={event.image}
+            alt={event.title}
+            style={{ maxWidth: "100%", height: "auto" }}
+            margin="20px"
+            borderRadius="10px"
+            width="500px"
+            height="400px"
+            objectFit="cover"
           />
         </Box>
-      )}
-      <Flex flexDirection="row">
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="left"
+          alignItems="left"
+          textAlign="left"
+          width="50%"
+          padding="20px"
+        >
+          <Text fontSize="2xl">Starting time: {event.startTime}</Text>
+          <Text fontSize="2xl">End time: {event.endTime}</Text>
+          <Text fontSize="2xl">
+            Category: {getCategoryNames(event.categoryIds)}
+          </Text>
+          {createdByUser && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="left"
+              alignItems="left"
+              textAlign="left"
+            >
+              <Text fontSize="2xl">Created by: {createdByUser.name}</Text>
+              <Image
+                src={createdByUser.image}
+                alt={createdByUser.name}
+                boxSize="150px"
+                borderRadius="full"
+                margin="15px"
+              />
+            </Box>
+          )}
+        </Box>
+      </Flex>
+
+      <Flex flexDirection="row" marginTop="20px">
         <Button onClick={onOpen} colorScheme="blue" marginRight="10px">
           Edit Event
         </Button>
@@ -115,7 +157,7 @@ export const EventPage = () => {
           onClose={onClose}
           event={event}
           eventId={eventId}
-          onDelete={handleDeleteEvent}
+          onUpdate={handleUpdateEvent} // Callback doorgeven
         />
 
         <DeleteEvent

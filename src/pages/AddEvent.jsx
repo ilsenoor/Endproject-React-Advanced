@@ -12,7 +12,7 @@ import {
 import { Form, useNavigate } from "react-router-dom";
 
 export const AddEvent = () => {
-  const navigate = useNavigate(); // Gebruik de useNavigate hook
+  const navigate = useNavigate();
   const [createdBy, setCreatedBy] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -71,10 +71,14 @@ export const AddEvent = () => {
 
     if (response.ok) {
       console.log("Event successfully submitted");
-      navigate("/"); // Navigeer terug naar de EventsPage
+      navigate("/");
     } else {
       console.error("Failed to submit event");
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/");
   };
 
   return (
@@ -196,8 +200,11 @@ export const AddEvent = () => {
             required
           />
         </FormControl>
-        <Button mt={4} type="submit" colorScheme="teal">
+        <Button mt={4} type="submit" colorScheme="teal" mr={4}>
           Submit
+        </Button>
+        <Button mt={4} colorScheme="red" onClick={handleCancel}>
+          Cancel
         </Button>
       </Form>
     </Box>
