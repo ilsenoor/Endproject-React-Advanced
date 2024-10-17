@@ -125,11 +125,11 @@ export const EventsPage = () => {
                   borderColor="blackAlpha.900"
                   p={4}
                   m={4}
-                  width="300px" // Consistente breedte
-                  height="450px" // Vaste hoogte voor gelijke grootte
-                  display="flex" // Zorgt ervoor dat de inhoud zich gelijkmatig vult
+                  width="300px"
+                  height="450px"
+                  display="flex"
                   flexDirection="column"
-                  justifyContent="space-between" // Zorgt dat de items evenredig worden verdeeld
+                  justifyContent="space-between"
                   alignItems="center"
                   textAlign="center"
                 >

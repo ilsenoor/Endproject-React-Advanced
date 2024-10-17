@@ -61,7 +61,7 @@ export const EventPage = () => {
     return eventCategories.map((cat) => cat.name).join(", ");
   };
 
-  const handleDeleteEvent = (eventId) => {
+  const handleDeleteEvent = () => {
     navigate("/");
   };
 
@@ -157,7 +157,7 @@ export const EventPage = () => {
           onClose={onClose}
           event={event}
           eventId={eventId}
-          onUpdate={handleUpdateEvent} // Callback doorgeven
+          onUpdate={handleUpdateEvent}
         />
 
         <DeleteEvent
